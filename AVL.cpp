@@ -82,6 +82,34 @@ Node *insert(Node *root, int value)
     }
 
     root->height = 1 + max(getHeight(root->left), getHeight(root->right));
+
+    int bf = getBalanceFactor(root);
+
+    if (bf > 1)
+    {
+        if (value < root->left->data)
+        {
+            return rightRotate(root);
+        }
+        else
+        {
+            root->left = leftRotate(root->left);
+            return rightRotate(root);
+        }
+    }
+    else if (bf < -1)
+    {
+        if (value > root->right->data)
+        {
+            return leftRotate(root);
+        }
+        else
+        {
+            root->right = rightRotate(root->right);
+            return leftRotate(root);
+        }
+    }
+    return root;
 }
 
 void inorder(Node *root)
@@ -175,6 +203,15 @@ void postorderIteration(Node *root)
 }
 int main()
 {
-
+    Node *root = NULL;
+    root = insert(root, 11);
+    root = insert(root, 9);
+    root = insert(root, 18);
+    root = insert(root, 5);
+    root = insert(root, 10);
+    preorder(root);
+    cout << endl;
+    root = insert(root, 4);
+    preorder(root);
     return 0;
 }
