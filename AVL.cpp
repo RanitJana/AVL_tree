@@ -11,6 +11,79 @@ struct Node
         this->left = this->right = NULL;
     }
 };
+
+int getHeight(Node *root)
+{
+    return root ? root->height : 0;
+}
+int getBalanceFactor(Node *root)
+{
+    return getHeight(root->left) - getHeight(root->right);
+}
+
+/*
+        x
+       / \
+      y   t3
+     / \
+    t1  t2
+
+    right rotate->>>
+    <<-left rotate
+
+        y
+       / \
+     t1   x
+         / \
+        t2  t3
+
+*/
+
+Node *rightRotate(Node *x)
+{
+    Node *y = x->left;
+    Node *t2 = y->right;
+
+    y->right = x;
+    x->left = t2;
+
+    x->height = 1 + max(getHeight(x->left), getHeight(x->right));
+    y->height = 1 + max(getHeight(y->left), getHeight(y->right));
+
+    return y;
+}
+
+Node *leftRotate(Node *y)
+{
+    Node *x = y->right;
+    Node *t2 = x->left;
+
+    x->left = y;
+    y->right = t2;
+
+    y->height = 1 + max(getHeight(y->left), getHeight(y->right));
+    x->height = 1 + max(getHeight(x->left), getHeight(x->right));
+
+    return x;
+}
+
+Node *insert(Node *root, int value)
+{
+    if (!root)
+        return new Node(value);
+    if (value > root->data)
+        root->right = insert(root->right, value);
+    else if (value < root->data)
+        root->left = insert(root->left, value);
+    else
+    {
+        cout << value << " is already present.\n";
+        return root;
+    }
+
+    root->height = 1 + max(getHeight(root->left), getHeight(root->right));
+}
+
 void inorder(Node *root)
 {
     if (!root)
