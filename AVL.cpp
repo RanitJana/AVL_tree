@@ -112,6 +112,65 @@ Node *insert(Node *root, int value)
     return root;
 }
 
+Node *inorderSuccessor(Node *root)
+{
+    root = root->right;
+    while (root->left)
+        root = root->left;
+    return root;
+}
+
+Node *erase(Node *root, int target)
+{
+    if (!root)
+        return NULL;
+    if (target > root->data)
+        root->right = erase(root->right, target);
+    else if (target < root->data)
+        root->left = erase(root->left, target);
+    else
+    {
+        if (root->left == NULL || root->right == NULL)
+        {
+            Node *child = root->left ? root->left : root->right;
+            delete root;
+            return child;
+        }
+
+        Node *succ = inorderSuccessor(root);
+        root->data = succ->data;
+        root->right = erase(root->right, root->data);
+    }
+
+    int bf = getBalanceFactor(root);
+
+    if (bf > 1)
+    {
+        if (getBalanceFactor(root->left) >= 0)
+        {
+            return rightRotate(root);
+        }
+        else
+        {
+            root->left = leftRotate(root->left);
+            return rightRotate(root);
+        }
+    }
+    else if (bf < -1)
+    {
+        if (getBalanceFactor(root->right) <= 0)
+        {
+            return leftRotate(root);
+        }
+        else
+        {
+            root->right = rightRotate(root->right);
+            return leftRotate(root);
+        }
+    }
+    return root;
+}
+
 void inorder(Node *root)
 {
     if (!root)
@@ -211,7 +270,7 @@ int main()
     root = insert(root, 10);
     preorder(root);
     cout << endl;
-    root = insert(root, 4);
+    root = erase(root, 18);
     preorder(root);
     return 0;
 }
