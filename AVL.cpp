@@ -142,6 +142,9 @@ Node *erase(Node *root, int target)
         root->right = erase(root->right, root->data);
     }
 
+    if(root==NULL) return root;
+
+    root->height=max(getHeight(root->left),getHeight(root->right))+1;
     int bf = getBalanceFactor(root);
 
     if (bf > 1)
